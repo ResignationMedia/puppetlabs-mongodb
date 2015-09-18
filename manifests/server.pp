@@ -1,7 +1,7 @@
 # This installs a MongoDB server. See README.md for more details.
 class mongodb::server (
   $ensure           = $mongodb::params::ensure,
-
+  $manage_config    = $mongodb::params::manage_config,
   $user             = $mongodb::params::user,
   $group            = $mongodb::params::group,
 
@@ -87,11 +87,6 @@ class mongodb::server (
       class { 'mongodb::server::config': }~>
       class { 'mongodb::server::service': }->
       anchor { 'mongodb::server::end': }
-    } elsif (($ensure == 'present' or $ensure == true) and $manage_config == false) {
-      anchor { 'mongodb::server::start': }->
-      class { 'mongodb::server::install': }->
-      class { 'mongodb::server::service': }->
-      anchor { 'mongodb::server::end': }
     } else {
       anchor { 'mongodb::server::start': }->
       class { 'mongodb::server::install': }->
@@ -100,6 +95,11 @@ class mongodb::server (
       class { 'mongodb::server::service': }->
       anchor { 'mongodb::server::end': }
     }
+  } elsif (($ensure == 'present' or $ensure == true) and $manage_config == false) {
+    anchor { 'mongodb::server::start': }->
+    class { 'mongodb::server::install': }->
+    class { 'mongodb::server::service': }->
+    anchor { 'mongodb::server::end': }
   } else {
     anchor { 'mongodb::server::start': }->
     class { '::mongodb::server::service': }->
