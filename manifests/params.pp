@@ -1,6 +1,7 @@
 # PRIVATE CLASS: do not use directly
 class mongodb::params inherits mongodb::globals {
   $ensure                = true
+  $manage_config         = true
   $mongos_ensure         = true
   $ipv6                  = undef
   $service_manage        = pick($mongodb::globals::mongod_service_manage, true)
