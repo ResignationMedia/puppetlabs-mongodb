@@ -68,7 +68,7 @@ class mongodb::server::config {
   if ($ensure == 'present' or $ensure == true) {
 
     # Exists for future compatibility and clarity.
-    if $auth {
+    if $auth or $keyfile != undef {
       $noauth = false
     }
     else {
@@ -192,6 +192,11 @@ class mongodb::server::config {
       owner   => 'root',
       group   => 'root',
       mode    => '0644',
+    }
+
+    exec { 'create_dbpath_dirs':
+      command => "/bin/mkdir -p ${dbpath}",
+      before => File[$dbpath],
     }
 
     file { $dbpath:
