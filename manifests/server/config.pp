@@ -194,11 +194,6 @@ class mongodb::server::config {
       mode    => '0644',
     }
 
-    exec { 'create_dbpath_dirs':
-      command => "/bin/mkdir -p ${dbpath}",
-      before => File[$dbpath],
-    }
-
     file { $dbpath:
       ensure  => directory,
       mode    => '0755',

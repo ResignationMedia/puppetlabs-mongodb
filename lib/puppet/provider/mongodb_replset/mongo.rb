@@ -236,7 +236,7 @@ Puppet::Type.type(:mongodb_replset).provide(:mongo, :parent => Puppet::Provider:
       args = Array.new
       args << '--quiet'
       args << ['--host',host] if host
-      args << ['--eval',"printjson(#{command})"]
+      args << ['--eval',"load('/root/.mongorc.js'); printjson(#{command})"]
       output = mongo(args.flatten)
     rescue Puppet::ExecutionFailure => e
       if e =~ /Error: couldn't connect to server/ and wait <= 2**max_wait
