@@ -8,7 +8,11 @@ module Puppet::Parser::Functions
     args << '--quiet'
     args << ['--host','127.0.0.1']
     args << ['--eval',"load('/root/.mongorc.js'); printjson(db.isMaster().ismaster)"]
-    
-    return `/usr/bin/mongo --host 127.0.0.1 --eval load('/root/.mongorc.js'); printjson(db.isMaster().ismaster)`
+   
+    if File.file?("/root/.mongorc.js")
+        return `/usr/bin/mongo --host 127.0.0.1 --eval load('/root/.mongorc.js'); printjson(db.isMaster().ismaster)`
+    else
+        return `/usr/bin/mongo --host 127.0.0.1 --eval printjson(db.isMaster().ismaster)`
+    end
   end
 end
