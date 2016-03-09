@@ -201,6 +201,18 @@ class mongodb::server::config {
       group   => $group,
       require => File[$config]
     }
+
+    if $::osfamily == 'RedHat' {
+      if $::os['release']['major'] == '7' {
+        file { '/etc/tmpfiles.d/mongodb.conf':
+          ensure => file,
+          mode => '0644',
+          owner => 'root',
+          group => 'root',
+          content => template('mongodb/tmpfiles_mongodb.erb'),
+        }
+      }
+    }
   } else {
     file { $dbpath:
       ensure => absent,
