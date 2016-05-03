@@ -211,6 +211,15 @@ class mongodb::server::config {
       require => File[$config]
     }
 
+    if $pidfilepath {
+      file { $pidfilepath:
+        ensure => file,
+        mode   => '0644',
+        owner  => $user,
+        group  => $group,
+      }
+    }
+
     if $::osfamily == 'RedHat' {
       if $::os['release']['major'] == '7' {
         file { '/etc/tmpfiles.d/mongodb.conf':
@@ -221,36 +230,28 @@ class mongodb::server::config {
           content => template('mongodb/tmpfiles_mongodb.erb'),
         }
       }
-  } else {
-    if $pidfilepath {
-      file { $pidfilepath:
-        ensure => file,
-        mode   => '0644',
-        owner  => $user,
-        group  => $group,
+    } 
+
+    if $auth and $store_creds {
+      file { $rcfile:
+        ensure  => present,
+        content => template('mongodb/mongorc.js.erb'),
+        owner   => 'root',
+        group   => 'root',
+        mode    => '0600'
+      }
+    } else {
+      file { $rcfile:
+        ensure => absent
       }
     }
-
+  } else {
     file { $dbpath:
       ensure => absent,
       force  => true,
       backup => false,
     }
     file { $config:
-      ensure => absent
-    }
-  }
-
-  if $auth and $store_creds {
-    file { $rcfile:
-      ensure  => present,
-      content => template('mongodb/mongorc.js.erb'),
-      owner   => 'root',
-      group   => 'root',
-      mode    => '0600'
-    }
-  } else {
-    file { $rcfile:
       ensure => absent
     }
   }
