@@ -18,6 +18,11 @@ class mongodb::server::config {
   $cpu             = $mongodb::server::cpu
   $auth            = $mongodb::server::auth
   $noath           = $mongodb::server::noauth
+  $create_admin    = $mongodb::server::create_admin
+  $admin_username  = $mongodb::server::admin_username
+  $admin_password  = $mongodb::server::admin_password
+  $store_creds     = $mongodb::server::store_creds
+  $rcfile          = $mongodb::server::rcfile
   $verbose         = $mongodb::server::verbose
   $verbositylevel  = $mongodb::server::verbositylevel
   $objcheck        = $mongodb::server::objcheck
@@ -50,6 +55,7 @@ class mongodb::server::config {
   $bind_ip         = $mongodb::server::bind_ip
   $directoryperdb  = $mongodb::server::directoryperdb
   $profile         = $mongodb::server::profile
+  $maxconns        = $mongodb::server::maxconns
   $set_parameter   = $mongodb::server::set_parameter
   $syslog          = $mongodb::server::syslog
   $ssl             = $mongodb::server::ssl
@@ -95,7 +101,7 @@ class mongodb::server::config {
     #Pick which config content to use
     if $config_content {
       $cfg_content = $config_content
-    } elsif (versioncmp($version, '2.6.0') >= 0) {
+    } elsif $version and (versioncmp($version, '2.6.0') >= 0) {
       # Template uses:
       # - $auth
       # - $bind_ip
@@ -127,6 +133,9 @@ class mongodb::server::config {
       # - $shardsvr
       # - $slowms
       # - $smallfiles
+      # - $ssl
+      # - $ssl_ca
+      # - $ssl_key
       # - $syslog
       # - $verbose
       # - $verbositylevel
@@ -212,14 +221,36 @@ class mongodb::server::config {
           content => template('mongodb/tmpfiles_mongodb.erb'),
         }
       }
-    }
   } else {
+    if $pidfilepath {
+      file { $pidfilepath:
+        ensure => file,
+        mode   => '0644',
+        owner  => $user,
+        group  => $group,
+      }
+    }
+
     file { $dbpath:
       ensure => absent,
       force  => true,
       backup => false,
     }
     file { $config:
+      ensure => absent
+    }
+  }
+
+  if $auth and $store_creds {
+    file { $rcfile:
+      ensure  => present,
+      content => template('mongodb/mongorc.js.erb'),
+      owner   => 'root',
+      group   => 'root',
+      mode    => '0600'
+    }
+  } else {
+    file { $rcfile:
       ensure => absent
     }
   }
