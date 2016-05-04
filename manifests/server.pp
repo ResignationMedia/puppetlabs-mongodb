@@ -79,6 +79,7 @@ class mongodb::server (
                       'readWriteAnyDatabase', 'userAdminAnyDatabase',
                       'clusterAdmin', 'clusterManager', 'clusterMonitor',
                       'hostManager', 'root', 'restore'],
+  $create_databases = false,
 
   # Deprecated parameters
   $master          = undef,
@@ -135,6 +136,22 @@ class mongodb::server (
 
     # Make sure it runs before other DB creation
     Mongodb::Db['admin'] -> Mongodb::Db <| title != 'admin' |>
+  }
+
+  if $create_databases {
+    $databases_real = hiera_hash('mongodb::server::databases', undef)
+
+    if $databases_real != undef {
+      if $create_admin {
+        $db_hiera_options = {
+          require => Mongodb::Db['admin'],
+        }
+      } else {
+        $db_hiera_options = {}
+      }
+
+      create_resources(mongodb::db, $databases_real, $db_hiera_options)
+    }
   }
 
   # Set-up replicasets
