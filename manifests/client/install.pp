@@ -42,12 +42,14 @@ class mongodb::client::install {
       tag    => 'mongodb',
     }
   }
-
-  if $tools_package_name {
-    package { 'mongodb_tools':
-      ensure => $my_tools_package_ensure,
-      name => $tools_package_name,
-      tag => 'mongodb',
+ 
+  if $::os['family'] != 'RedHat' or ($::os['family'] == 'RedHat' and $::os['release']['major'] != '7') {
+    if $tools_package_name {
+      package { 'mongodb_tools':
+        ensure => $my_tools_package_ensure,
+        name => $tools_package_name,
+        tag => 'mongodb',
+      }
     }
   }
 }
