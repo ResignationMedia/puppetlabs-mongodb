@@ -8,7 +8,7 @@ Facter.add('mongodb_is_master') do
       else
         mongo_output = Facter::Core::Execution.exec('mongo --quiet --eval "printjson(db.isMaster())"')
       end
-      JSON.parse(mongo_output.gsub(/ISODate\((.+?)\)/, '\1 '))['ismaster'] ||= false
+      JSON.parse(mongo_output.gsub(/ISODate\((.+?)\)/, '\1 ').gsub(/ObjectId\((.+?)\)/, '\1 '))['ismaster'] ||= false
     else 
       'not_installed'
     end
