@@ -191,7 +191,6 @@ class mongodb::server (
       if $create_admin {
         Class['mongodb::replset'] -> Mongodb::Db['admin']
       }
-
     }
   }
 }

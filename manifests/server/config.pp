@@ -238,7 +238,7 @@ class mongodb::server::config {
         content => template('mongodb/mongorc.js.erb'),
         owner   => 'root',
         group   => 'root',
-        mode    => '0600'
+        mode    => '0600',
       }
     } else {
       file { $rcfile:

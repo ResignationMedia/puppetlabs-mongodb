@@ -259,18 +259,14 @@ Puppet::Type.type(:mongodb_replset).provide(:mongo, :parent => Puppet::Provider:
 
   def self.mongo_command(command, host=nil, retries=4)
     begin
-      if File.file?("/root/.mongorc.js") 
-        output = mongo_eval("load('/root/.mongorc.js'); printjson(#{command})", 'admin', retries, host)
-      else
         output = mongo_eval("printjson(#{command})", 'admin', retries, host)
-      end
     rescue Puppet::ExecutionFailure => e
       Puppet.debug "Got an exception: #{e}"
       raise
     end
 
     # Dirty hack to remove JavaScript objects
-    output.gsub!(/\w+\((.+?)\)/, '\1')
+    output.gsub!(/\w+\((.+?)(, [0-9])?\)/, '\1')
 
     #Hack to avoid non-json empty sets
     output = "{}" if output == "null\n"
