@@ -14,7 +14,7 @@ class mongodb::client (
   $tools_package_name = $mongodb::params::tools_package_name,
   $tools_package_ensure = $mongodb::params::tools_package_ensure,
 ) inherits mongodb::params {
-  anchor { '::mongodb::client::start': } ->
-  class { '::mongodb::client::install': } ->
-  anchor { '::mongodb::client::end': }
+  anchor { '::mongodb::client::start': }
+  -> class { '::mongodb::client::install': }
+  -> anchor { '::mongodb::client::end': }
 }

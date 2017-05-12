@@ -1,5 +1,65 @@
+## Release 0.17.0
+### Summary
+Adding features to improve spec testing, and added ability to manage pidfile creation
+
+## Bugfixes
+- gettext and spec.opts fixes
+- MODULES-3631 - msync Gemfile for 1.0 frozen strings
+- MODULES-3956 - MongoDB 3.12 creates pid file and checks in init script
+- MODULES-3704 - Update gemfile template to be identical
+- Allow deprecation errors
+
+## Release 0.16.0
+### Summary
+We fixed a critical bug where we lost idempotency in 0.15.0. The patch that fix
+this problem will be part of this release.
+
+### Bugfixes
+- Recursively manage only user/group for dbpath
+
+## Release 0.15.0
+### Summary
+The addition of several new functional features which will help with management and multiple bug fixes.
+
+### Features
+- Added ability to set PID file mode.
+- Recursively manage the contents of dbpath directory.
+- Now alllows custom templates.
+- Addition of mongo listen port before creating facter.
+
+### Bugfixes
+- Now allows hyphens in database names.
+- Now converts MongoDB ObjectID objects to generic JSON.
+- Use the same regex that the mongodb provider does when correcting for ObjectID values in the isMaster response.
+- Fixes to ensure that the auth property for config is parsed correctly.
+- Now checks if mongo is up before evaluating is_master fact.
+
+## Release 0.14.0
+### Summary
+This breaking release increases the lower bound of the puppetlabs-apt dependency to the 2.x series of apt and puppetlabs-stdlib to >= 4.4.0. The operating system metadata is also updated to reflect modern systems.
+
+### Backwards-incompatible change
+- Increase apt lower dependency to >= 2.1.0
+- Increase stdlib lower dependency to >= 4.4.0
+- Drop RHEL & Centos 5
+- Drop Debian 6
+- Drop Ubuntu 10.04
+
+### Features
+- Add `mongodb_is_master` fact
+- Add `mongodb::db::db_name` parameter for exported resource deduplication
+- Add Debian 8 compatibility
+- Add Ubuntu 14.04 compatibility
+- Add Ubuntu 16.04 compatibility
+- Add puppet 3.x 4.x compatibility metadata
+
+### Bugfixes
+- Catch unconfigured replset configuration queries
+- Fix timestamp and other javascript object removal
+- Correct permissions on .mongorc.js to 600
+
 ## Release 0.13.0
-### Summary 
+### Summary
 Adds several new large features, including the support of mongodb 3.x. Also applies numerous bugfixes, mainly around fixing errors being thrown and syntax issues.
 
 #### Features

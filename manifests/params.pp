@@ -13,6 +13,7 @@ class mongodb::params inherits mongodb::globals {
   $admin_username        = 'admin'
   $store_creds           = false
   $rcfile                = "${::root_home}/.mongorc.js"
+  $dbpath_fix            = true
 
   $mongos_service_manage = pick($mongodb::globals::mongos_service_manage, true)
   $mongos_service_enable = pick($mongodb::globals::mongos_service_enable, true)
@@ -22,6 +23,8 @@ class mongodb::params inherits mongodb::globals {
   $mongos_restart        = true
 
   $manage_package        = pick($mongodb::globals::manage_package, $mongodb::globals::manage_package_repo, false)
+  $pidfilemode           = pick($mongodb::globals::pidfilemode, '0644')
+  $manage_pidfile        = pick($mongodb::globals::manage_pidfile, true)
 
   $version = $::mongodb::globals::version
 
@@ -160,7 +163,7 @@ class mongodb::params inherits mongodb::globals {
         $mongos_config           = '/etc/mongodb-shard.conf'
         $dbpath                  = '/var/lib/mongodb'
         $logpath                 = '/var/log/mongodb/mongodb.log'
-        $pidfilepath             = '/var/run/mongod.pid'
+        $pidfilepath             = pick($::mongodb::globals::pidfilepath, '/var/run/mongod.pid')
         $bind_ip                 = pick($::mongodb::globals::bind_ip, ['127.0.0.1'])
       } else {
         # although we are living in a free world,
@@ -218,7 +221,11 @@ class mongodb::params inherits mongodb::globals {
       }
     }
     'Ubuntu': {
-      $service_provider = pick($service_provider, 'upstart')
+      if versioncmp($::operatingsystemmajrelease, '16') >= 0 {
+        $service_provider = pick($service_provider, 'systemd')
+      } else {
+        $service_provider = pick($service_provider, 'upstart')
+      }
     }
     default: {
       $service_provider = undef

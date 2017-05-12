@@ -263,6 +263,9 @@ it's data. If not specified, the module will use the default for your OS distro.
 Specify a file location to hold the PID or process ID of the mongod process.
 If not specified, the module will use the default for your OS distro.
 
+#####`manage_pidfile`
+Should puppet create the pidfile. Mondod 6.2.10 will not start if pidfile exists
+
 #####`logpath`
 Specify the path to a file name for the log file that will hold all diagnostic
 logging information. Unless specified, mongod will output all log information
@@ -281,6 +284,10 @@ will use the default for your OS distro. Example: bind_ip=['127.0.0.1', '192.168
 #####`logappend`
 Set to true to add new entries to the end of the logfile rather than overwriting
 the content of the log when the process restarts. Default: True
+
+#####`system_logrotate`
+Set to reopen for mongo to close a log file then reopen it so that logrotations handled
+outside of mongo perform as expected. Default: undef
 
 #####`fork`
 Set to true to fork server process at launch time. The default setting depends on
@@ -486,6 +493,10 @@ Default: <>
 #####`ssl_ca`
 Default: <>
 
+#####`ssl_weak_cert`
+Set to true to disable mandatory SSL client authentication
+Default: False
+
 #####`service_manage`
 Whether or not the MongoDB service resource should be part of the catalog.
 Default: true
@@ -531,6 +542,9 @@ Path of the config file. If not specified, the module will use the default
 for your OS distro.
 
 #####`config_content`
+Config content if the default doesn't match one needs.
+
+#####`config_template`
 Path to the config template if the default doesn't match one needs.
 
 #####`configdb`
