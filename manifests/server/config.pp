@@ -236,17 +236,6 @@ class mongodb::server::config {
       }
     }
 
-    if $pidfilepath {
-      if $manage_pidfile {
-        file { $pidfilepath:
-          ensure => file,
-          mode   => $pidfilemode,
-          owner  => $user,
-          group  => $group,
-        }
-      }
-    }
-
     if $::osfamily == 'RedHat' {
       if $::os['release']['major'] == '7' {
         file { '/etc/tmpfiles.d/mongodb.conf':
