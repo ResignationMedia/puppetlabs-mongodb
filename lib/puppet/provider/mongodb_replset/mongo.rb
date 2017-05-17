@@ -115,20 +115,24 @@ Puppet::Type.type(:mongodb_replset).provide(:mongo, :parent => Puppet::Provider:
   end
 
   def self.get_replset_properties
-    conn_string = get_conn_string
-    output = mongo_command('rs.conf()', conn_string)
-    if output['members']
-      members = output['members'].collect do |val|
-        val['host']
-      end
-      props = {
-        :name     => output['_id'],
-        :ensure   => :present,
-        :members  => members,
-        :provider => :mongo,
-      }
-    else
+    if rs_arbiter == Facter.value(:hostname)
       props = nil
+    else
+      conn_string = get_conn_string
+      output = mongo_command('rs.conf()', conn_string)
+      if output['members']
+        members = output['members'].collect do |val|
+          val['host']
+        end
+        props = {
+          :name     => output['_id'],
+          :ensure   => :present,
+          :members  => members,
+          :provider => :mongo,
+        }
+      else
+        props = nil
+      end
     end
     Puppet.debug("MongoDB replset properties: #{props.inspect}")
     props
