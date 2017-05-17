@@ -229,8 +229,23 @@ class mongodb::server::config {
           group => 'root',
           content => template('mongodb/tmpfiles_mongodb.erb'),
         }
+      } elsif $pidfilepath {
+        file { $pidfilepath:
+          ensure => file,
+          mode   => '0644',
+          owner  => $user,
+          group  => $group,
+        }
       }
-    } 
+    } elsif $pidfilepath {
+      file { $pidfilepath:
+        ensure => file,
+        mode   => '0644',
+        owner  => $user,
+        group  => $group,
+      }
+
+    }
 
     if $auth and $store_creds {
       file { $rcfile:
