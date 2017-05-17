@@ -211,15 +211,6 @@ class mongodb::server::config {
       require => File[$config]
     }
 
-    if $pidfilepath {
-      file { $pidfilepath:
-        ensure => file,
-        mode   => '0644',
-        owner  => $user,
-        group  => $group,
-      }
-    }
-
     if $::osfamily == 'RedHat' {
       if $::os['release']['major'] == '7' {
         file { '/etc/tmpfiles.d/mongodb.conf':
@@ -244,7 +235,6 @@ class mongodb::server::config {
         owner  => $user,
         group  => $group,
       }
-
     }
 
     if $auth and $store_creds {
